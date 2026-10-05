@@ -64,7 +64,10 @@ export function ImpactMap({ records, selectedYear }: { records: ImpactRecord[]; 
       mapModuleRef.current = maplibre;
       const map = new maplibre.Map({
         container: containerRef.current,
-        style: "https://tiles.openfreemap.org/styles/positron",
+        // CARTO's legacy raster tile endpoint (basemaps.cartocdn.com/rastertiles/...)
+        // now requires a paid API key. This is CARTO's public Voyager vector
+        // style, which renders the same Voyager basemap without a key.
+        style: "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
         center: [34.8, 31.5],
         zoom: 5.5,
         minZoom: 2,
