@@ -102,13 +102,24 @@ export function ImpactMap({ records, selectedYear }: { records: ImpactRecord[]; 
         marker.className = "impact-marker";
         marker.setAttribute("aria-label", `${group.name}, ${beneficiaries.toLocaleString("id-ID")} penerima manfaat`);
         marker.innerHTML = `<span>${formatCompactBeneficiaries(beneficiaries)}</span>`;
-        const popup = new maplibre.Popup({ offset: 24, closeButton: true, maxWidth: "260px", focusAfterOpen: false }).setDOMContent(popupContent(group));
-        // Opening a popup can grow the container (e.g. it pushes against the
-        // map edge) - resize right after it opens so the canvas and the
-        // popup's own re-anchoring stay in sync and nothing renders cut off.
-        popup.on("open", () => {
+        const popup = new maplibre.Popup({
+          offset: 24,
+          closeButton: true,
+          closeOnMove: false,
+          maxWidth: "260px",
+          focusAfterOpen: false,
+        }).setDOMContent(popupContent(group));
+        // Opening/closing a popup can momentarily change the container's
+        // measured size (e.g. it pushes against the map edge or the browser
+        // reflows the surrounding card). Resize immediately on the next frame
+        // AND again after a short delay once the popup's own CSS transition
+        // settles, so the canvas never renders a partial/gray area underneath.
+        const resizeAfterPopupChange = () => {
           requestAnimationFrame(() => map.resize());
-        });
+          setTimeout(() => map.resize(), 200);
+        };
+        popup.on("open", resizeAfterPopupChange);
+        popup.on("close", resizeAfterPopupChange);
         return new maplibre.Marker({ element: marker, anchor: "bottom" }).setLngLat([group.longitude, group.latitude]).setPopup(popup).addTo(map);
       });
       if (groups.length > 0) {
@@ -156,8 +167,12 @@ export function ImpactMap({ records, selectedYear }: { records: ImpactRecord[]; 
   }, [mapReady]);
 
   return (
-    <div className="relative h-[480px] overflow-hidden rounded-md bg-muted lg:h-[520px]">
-      <div ref={containerRef} className="absolute inset-0" aria-label="Peta interaktif lokasi aksi kemanusiaan IZI" />
+    <div className="relative h-[520px] min-h-[520px] w-full overflow-hidden rounded-md bg-muted" style={{ zIndex: 1 }}>
+      <div
+        ref={containerRef}
+        className="absolute inset-0 size-full [&_.maplibregl-canvas-container]:size-full [&_.maplibregl-canvas]:size-full"
+        aria-label="Peta interaktif lokasi aksi kemanusiaan IZI"
+      />
       <div className="absolute bottom-4 right-4 z-10 flex flex-col gap-1">
         <Button variant="map" size="icon" aria-label="Perbesar peta" title="Perbesar" onClick={() => mapRef.current?.zoomIn()}><Plus /></Button>
         <Button variant="map" size="icon" aria-label="Perkecil peta" title="Perkecil" onClick={() => mapRef.current?.zoomOut()}><Minus /></Button>
