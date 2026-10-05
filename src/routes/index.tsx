@@ -38,12 +38,12 @@ function Index() {
   const summary = useMemo(() => summarizeRecords(records), [records]);
   const locationRows = useMemo(() => {
     const rows = new Map<string, number>();
-    records.forEach((record) => rows.set(record.location, (rows.get(record.location) ?? 0) + 1));
+    records.forEach((record) => rows.set(record.location, (rows.get(record.location) ?? 0) + record.beneficiaries));
     return [...rows].sort((a, b) => b[1] - a[1]);
   }, [records]);
   const programRows = useMemo(() => {
     const rows = new Map<string, number>();
-    records.forEach((record) => rows.set(record.program, (rows.get(record.program) ?? 0) + 1));
+    records.forEach((record) => rows.set(record.program, (rows.get(record.program) ?? 0) + record.beneficiaries));
     return [...rows].sort((a, b) => b[1] - a[1]);
   }, [records]);
 
@@ -85,12 +85,12 @@ function Index() {
                 <div className="absolute right-5 top-5 z-20 flex max-w-[calc(100%-2.5rem)] overflow-x-auto rounded-md border border-border bg-card p-1 shadow-sm" role="group" aria-label="Filter tahun">{YEAR_FILTERS.map((item) => <Button key={item} variant={year === item ? "filterActive" : "filter"} onClick={() => setYear(item)} aria-pressed={year === item}>{item}</Button>)}</div>
                 <ImpactMap records={records} selectedYear={year} />
               </div>
-              <aside className="border-t border-border p-5 xl:border-l xl:border-t-0"><div className="flex items-center gap-2"><MapPin className="size-5 text-primary" /><h3 className="font-display font-extrabold">Lokasi Aksi</h3></div><p className="mt-1 text-xs text-muted-foreground">{locationRows.length} wilayah aktif • {year === "All" ? "2023–2026" : year}</p><div className="mt-5 space-y-1">{locationRows.map(([location, actions], index) => <div key={location} className="flex items-center justify-between gap-3 border-b border-border py-3 last:border-0"><div className="flex min-w-0 items-center gap-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-success-soft text-xs font-extrabold text-primary">{index + 1}</span><span className="truncate text-sm font-bold">{location}</span></div><span className="shrink-0 rounded-full bg-secondary px-2.5 py-1 text-xs font-bold">{actions} aksi</span></div>)}</div></aside>
+              <aside className="border-t border-border p-5 xl:border-l xl:border-t-0"><div className="flex items-center gap-2"><MapPin className="size-5 text-primary" /><h3 className="font-display font-extrabold">Lokasi Aksi</h3></div><p className="mt-1 text-xs text-muted-foreground">{locationRows.length} wilayah aktif • {year === "All" ? "2023–2026" : year}</p><div className="mt-5 space-y-1">{locationRows.map(([location, beneficiaries], index) => <div key={location} className="flex items-center justify-between gap-3 border-b border-border py-3 last:border-0"><div className="flex min-w-0 items-center gap-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-success-soft text-xs font-extrabold text-primary">{index + 1}</span><span className="truncate text-sm font-bold">{location}</span></div><span className="shrink-0 rounded-full bg-secondary px-2.5 py-1 text-xs font-bold">{beneficiaries.toLocaleString("id-ID")} Penerima Manfaat</span></div>)}</div></aside>
             </div>
           </section>
 
           <div id="data-program" className="grid scroll-mt-20 gap-5 lg:grid-cols-2">
-            <section className="rounded-md border border-border bg-card p-5 shadow-sm"><div className="flex items-center gap-2"><BarChart3 className="size-5 text-primary" /><h2 className="font-display font-extrabold">Distribusi Program</h2></div><div className="mt-4 space-y-3">{programRows.map(([program, count]) => <div key={program}><div className="mb-1.5 flex justify-between text-sm"><span className="font-semibold">{program}</span><strong>{count} aksi</strong></div><div className="h-1.5 overflow-hidden rounded-full bg-secondary"><div className="h-full rounded-full bg-primary transition-all" style={{ width: `${Math.max(8, (count / Math.max(...programRows.map((row) => row[1]))) * 100)}%` }} /></div></div>)}</div></section>
+            <section className="rounded-md border border-border bg-card p-5 shadow-sm"><div className="flex items-center gap-2"><BarChart3 className="size-5 text-primary" /><h2 className="font-display font-extrabold">Distribusi Program</h2></div><div className="mt-4 space-y-3">{programRows.map(([program, beneficiaries]) => <div key={program}><div className="mb-1.5 flex justify-between text-sm"><span className="font-semibold">{program}</span><strong>{beneficiaries.toLocaleString("id-ID")} Penerima Manfaat</strong></div><div className="h-1.5 overflow-hidden rounded-full bg-secondary"><div className="h-full rounded-full bg-primary transition-all" style={{ width: `${Math.max(8, (beneficiaries / Math.max(...programRows.map((row) => row[1]))) * 100)}%` }} /></div></div>)}</div></section>
             <section className="rounded-md border border-border bg-card p-5 shadow-sm"><div className="flex items-center gap-2"><CalendarDays className="size-5 text-primary" /><h2 className="font-display font-extrabold">Tahun Penyaluran</h2></div><div className="mt-4 grid grid-cols-2 gap-3">{YEAR_FILTERS.slice(0, 4).map((item) => { const count = filterRecords(item).length; return <Button key={item} variant={year === item ? "filterActive" : "outline"} className="h-auto justify-between p-4" onClick={() => setYear(item)}><span className="text-base">{item}</span><span>{count} aksi</span></Button>; })}</div></section>
           </div>
 

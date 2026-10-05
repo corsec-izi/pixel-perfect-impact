@@ -89,7 +89,7 @@
 .maplibregl-map { font-family: var(--font-sans); }
 .maplibregl-popup-content { border: 1px solid var(--border); border-radius: 8px; padding: 0; box-shadow: 0 14px 36px oklch(0.2 0.03 260 / 18%); }
 .maplibregl-popup-close-button { color: var(--muted-foreground); font-size: 20px; padding: 6px 9px; }
-.impact-marker { position: relative; display: grid; width: 42px; height: 49px; place-items: center; border: 3px solid var(--card); border-radius: 50% 50% 50% 0; background: var(--primary); color: var(--primary-foreground); box-shadow: 0 5px 14px oklch(0.2 0.03 260 / 30%); font: 800 13px/1 var(--font-sans); transform: rotate(-45deg); cursor: pointer; transition: transform 180ms ease; }
+.impact-marker { position: relative; display: grid; min-width: 42px; width: max-content; height: 49px; padding: 0 6px; place-items: center; border: 3px solid var(--card); border-radius: 50% 50% 50% 0; background: var(--primary); color: var(--primary-foreground); box-shadow: 0 5px 14px oklch(0.2 0.03 260 / 30%); font: 800 12px/1 var(--font-sans); transform: rotate(-45deg); cursor: pointer; transition: transform 180ms ease; }
 .impact-marker:hover { transform: rotate(-45deg) translate(2px, -2px) scale(1.08); }
 .impact-marker span { transform: rotate(45deg); }
 .impact-popup { min-width: 250px; padding: 18px; color: var(--foreground); }
