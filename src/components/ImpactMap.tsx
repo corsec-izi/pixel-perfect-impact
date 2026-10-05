@@ -102,7 +102,13 @@ export function ImpactMap({ records, selectedYear }: { records: ImpactRecord[]; 
         marker.className = "impact-marker";
         marker.setAttribute("aria-label", `${group.name}, ${beneficiaries.toLocaleString("id-ID")} penerima manfaat`);
         marker.innerHTML = `<span>${formatCompactBeneficiaries(beneficiaries)}</span>`;
-        const popup = new maplibre.Popup({ offset: 24, closeButton: true, maxWidth: "290px" }).setDOMContent(popupContent(group));
+        const popup = new maplibre.Popup({ offset: 24, closeButton: true, maxWidth: "260px", focusAfterOpen: false }).setDOMContent(popupContent(group));
+        // Opening a popup can grow the container (e.g. it pushes against the
+        // map edge) - resize right after it opens so the canvas and the
+        // popup's own re-anchoring stay in sync and nothing renders cut off.
+        popup.on("open", () => {
+          requestAnimationFrame(() => map.resize());
+        });
         return new maplibre.Marker({ element: marker, anchor: "bottom" }).setLngLat([group.longitude, group.latitude]).setPopup(popup).addTo(map);
       });
       if (groups.length > 0) {
