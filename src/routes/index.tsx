@@ -57,12 +57,12 @@ function Index() {
   return (
     <div className="min-h-screen bg-background font-sans">
       <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-sidebar-border bg-sidebar px-4 text-sidebar-foreground lg:hidden">
-        <a href="#beranda" className="flex items-center gap-2.5"><span className="grid size-9 place-items-center rounded-full bg-sidebar-primary text-xs font-extrabold text-sidebar-primary-foreground">IZI</span><span className="font-display text-sm font-bold">Peluk Palestina</span></a>
+        <a href="#beranda" className="flex items-center gap-2.5"><img src="/izi-logo.png" alt="Logo IZI" className="size-9 object-contain" /><span className="font-display text-sm font-bold">Peluk Palestina</span></a>
         <Button variant="ghost" size="icon" aria-label={menuOpen ? "Tutup menu" : "Buka menu"} onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <X /> : <Menu />}</Button>
       </header>
       {menuOpen && <div className="fixed inset-0 top-16 z-30 bg-hero/75 lg:hidden" onClick={() => setMenuOpen(false)} />}
       <aside className={`fixed bottom-0 left-0 top-16 z-40 flex w-64 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 text-sidebar-foreground transition-transform lg:top-0 lg:w-60 lg:translate-x-0 lg:py-8 ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <a href="#beranda" className="mb-10 hidden items-center gap-3 px-2 lg:flex"><span className="grid size-12 place-items-center rounded-full bg-sidebar-primary font-display text-base font-extrabold text-sidebar-primary-foreground">IZI</span><span className="text-[10px] font-bold leading-tight">INISIATIF ZAKAT<br />INDONESIA</span></a>
+        <a href="#beranda" className="mb-10 hidden items-center gap-3 px-2 lg:flex"><img src="/izi-logo.png" alt="Logo IZI" className="size-12 object-contain" /><span className="text-[10px] font-bold leading-tight">INISIATIF ZAKAT<br />INDONESIA</span></a>
         <nav className="space-y-1" aria-label="Navigasi utama">{navigation.map(({ label, href, icon: Icon }) => <a key={label} href={href} onClick={() => setMenuOpen(false)} className="flex items-center gap-3 rounded-md px-3 py-3 text-sm font-semibold text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"><Icon className="size-[18px]" />{label}</a>)}</nav>
         <DonationLink />
         <div className="mt-auto border-t border-sidebar-border pt-6"><p className="font-display text-xl font-bold leading-snug">Dari Indonesia<br />untuk Palestina.</p><span className="mt-4 block h-1 w-10 bg-sidebar-primary" /></div>
