@@ -62,7 +62,7 @@ function Index() {
       </header>
       {menuOpen && <div className="fixed inset-0 top-16 z-30 bg-hero/75 lg:hidden" onClick={() => setMenuOpen(false)} />}
       <aside className={`fixed bottom-0 left-0 top-16 z-40 flex w-64 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 text-sidebar-foreground transition-transform lg:top-0 lg:w-60 lg:translate-x-0 lg:py-8 ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <a href="#beranda" className="mb-10 hidden items-center gap-3 px-2 lg:flex"><img src="/izi-logo.png" alt="Logo IZI" className="size-12 object-contain" /><span className="text-[10px] font-bold leading-tight">INISIATIF ZAKAT<br />INDONESIA</span></a>
+        <a href="#beranda" className="mb-10 hidden items-center justify-center px-2 lg:flex"><img src="/izi-logo.png" alt="Logo IZI" className="size-16 object-contain" /></a>
         <nav className="space-y-1" aria-label="Navigasi utama">{navigation.map(({ label, href, icon: Icon }) => <a key={label} href={href} onClick={() => setMenuOpen(false)} className="flex items-center gap-3 rounded-md px-3 py-3 text-sm font-semibold text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"><Icon className="size-[18px]" />{label}</a>)}</nav>
         <DonationLink />
         <div className="mt-auto border-t border-sidebar-border pt-6"><p className="font-display text-xl font-bold leading-snug">Dari Indonesia<br />untuk Palestina.</p><span className="mt-4 block h-1 w-10 bg-sidebar-primary" /></div>
