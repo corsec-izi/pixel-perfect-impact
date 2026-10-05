@@ -1,3 +1,11 @@
+@@
+         ghost: "hover:bg-accent hover:text-accent-foreground",
+         link: "text-primary underline-offset-4 hover:underline",
++        donation: "rounded-full bg-primary text-primary-foreground shadow-sm hover:bg-primary/88",
++        map: "border border-border bg-card text-card-foreground shadow-sm hover:bg-accent",
++        filter: "h-8 rounded-sm px-3 text-xs font-bold text-muted-foreground hover:bg-accent hover:text-accent-foreground",
++        filterActive: "h-8 rounded-sm bg-primary px-3 text-xs font-bold text-primary-foreground shadow-sm",
+       },
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";

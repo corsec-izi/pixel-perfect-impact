@@ -1,3 +1,24 @@
+@@
+-      { title: "Lovable App" },
+-      { name: "description", content: "Lovable Generated Project" },
+-      { name: "author", content: "Lovable" },
+-      { property: "og:title", content: "Lovable App" },
+-      { property: "og:description", content: "Lovable Generated Project" },
++      { title: "Peluk Palestina — LAZNAS IZI" },
++      { name: "description", content: "Jejak aksi kemanusiaan LAZNAS IZI untuk Palestina." },
++      { name: "author", content: "LAZNAS IZI" },
++      { property: "og:title", content: "Peluk Palestina — LAZNAS IZI" },
++      { property: "og:description", content: "Jejak aksi kemanusiaan LAZNAS IZI untuk Palestina." },
+@@
+-      { name: "twitter:site", content: "@Lovable" },
+@@
+       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
++      { rel: "preconnect", href: "https://fonts.googleapis.com" },
++      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
++      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" },
+@@
+-    <html lang="en">
++    <html lang="id">
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
