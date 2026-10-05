@@ -105,15 +105,24 @@ export function ImpactMap({ records, selectedYear }: { records: ImpactRecord[]; 
       if (groups.length > 0) {
         const bounds = new maplibre.LngLatBounds();
         groups.forEach((group) => bounds.extend([group.longitude, group.latitude]));
+        // Cancel any camera animation still in flight before resizing/refitting.
+        // Resizing the canvas while a flyTo/fitBounds animation is mid-flight
+        // leaves part of the canvas unrendered (a torn, partially gray map),
+        // so we always stop first and resize right before starting the new one.
+        map.stop();
+        map.resize();
         map.fitBounds(bounds, { padding: { top: 90, right: 70, bottom: 70, left: 70 }, maxZoom: selectedYear === "All" ? 6.2 : 7.2, duration: 700 });
       }
     };
-    // Force the map to recalculate its canvas size before fitting to the new
-    // bounds. Without this, switching year filters can leave the canvas
-    // measured against a stale container size, rendering a blank/gray area.
+    // Wait a tick for the surrounding layout (stat cards, filter pills) to
+    // settle after the filter change, then resize and re-fit on the next
+    // animation frame so the canvas matches the final container size before
+    // we start the fly animation.
     const resizeTimer = setTimeout(() => {
-      map.resize();
-      renderMarkers();
+      requestAnimationFrame(() => {
+        map.resize();
+        renderMarkers();
+      });
     }, 150);
     return () => clearTimeout(resizeTimer);
   }, [mapReady, records, selectedYear]);
@@ -124,6 +133,13 @@ export function ImpactMap({ records, selectedYear }: { records: ImpactRecord[]; 
     const map = mapRef.current;
     if (!containerRef.current || !map) return;
     const observer = new ResizeObserver(() => {
+      // Never resize mid-animation: it corrupts the canvas (partially blank/
+      // gray tiles) because the in-flight camera transform and the resize
+      // fight over the same frame. Defer to right after the animation ends.
+      if (map.isMoving()) {
+        map.once("moveend", () => map.resize());
+        return;
+      }
       map.resize();
     });
     observer.observe(containerRef.current);
