@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Expand, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ImpactRecord, YearFilter } from "@/lib/impact-data";
@@ -53,6 +53,7 @@ export function ImpactMap({ records, selectedYear }: { records: ImpactRecord[]; 
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
   const mapModuleRef = useRef<typeof import("maplibre-gl") | null>(null);
+  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -63,11 +64,7 @@ export function ImpactMap({ records, selectedYear }: { records: ImpactRecord[]; 
       mapModuleRef.current = maplibre;
       const map = new maplibre.Map({
         container: containerRef.current,
-        style: {
-          version: 8,
-          sources: { carto: { type: "raster", tiles: ["https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"], tileSize: 256, attribution: "© OpenStreetMap © CARTO" } },
-          layers: [{ id: "carto", type: "raster", source: "carto" }],
-        },
+        style: "https://tiles.openfreemap.org/styles/positron",
         center: [34.8, 31.5],
         zoom: 5.5,
         minZoom: 2,
@@ -76,6 +73,7 @@ export function ImpactMap({ records, selectedYear }: { records: ImpactRecord[]; 
       });
       map.addControl(new maplibre.AttributionControl({ compact: true }), "bottom-left");
       mapRef.current = map;
+      map.once("load", () => setMapReady(true));
     });
     return () => {
       disposed = true;
@@ -83,13 +81,14 @@ export function ImpactMap({ records, selectedYear }: { records: ImpactRecord[]; 
       markersRef.current = [];
       mapRef.current?.remove();
       mapRef.current = null;
+      setMapReady(false);
     };
   }, []);
 
   useEffect(() => {
     const map = mapRef.current;
     const maplibre = mapModuleRef.current;
-    if (!map || !maplibre) return;
+    if (!map || !maplibre || !mapReady) return;
     const renderMarkers = () => {
       markersRef.current.forEach((marker) => marker.remove());
       const groups = groupRecords(records);
@@ -108,9 +107,8 @@ export function ImpactMap({ records, selectedYear }: { records: ImpactRecord[]; 
         map.fitBounds(bounds, { padding: { top: 90, right: 70, bottom: 70, left: 70 }, maxZoom: selectedYear === "All" ? 6.2 : 7.2, duration: 700 });
       }
     };
-    if (map.loaded()) renderMarkers();
-    else map.once("load", renderMarkers);
-  }, [records, selectedYear]);
+    renderMarkers();
+  }, [mapReady, records, selectedYear]);
 
   return (
     <div className="relative h-[480px] overflow-hidden rounded-md bg-muted lg:h-[520px]">
