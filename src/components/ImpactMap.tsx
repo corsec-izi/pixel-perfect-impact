@@ -108,8 +108,27 @@ export function ImpactMap({ records, selectedYear }: { records: ImpactRecord[]; 
         map.fitBounds(bounds, { padding: { top: 90, right: 70, bottom: 70, left: 70 }, maxZoom: selectedYear === "All" ? 6.2 : 7.2, duration: 700 });
       }
     };
-    renderMarkers();
+    // Force the map to recalculate its canvas size before fitting to the new
+    // bounds. Without this, switching year filters can leave the canvas
+    // measured against a stale container size, rendering a blank/gray area.
+    const resizeTimer = setTimeout(() => {
+      map.resize();
+      renderMarkers();
+    }, 150);
+    return () => clearTimeout(resizeTimer);
   }, [mapReady, records, selectedYear]);
+
+  // Re-measure whenever the container element itself changes size (e.g. the
+  // surrounding layout reflows when stat cards or filters change height).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!containerRef.current || !map) return;
+    const observer = new ResizeObserver(() => {
+      map.resize();
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [mapReady]);
 
   return (
     <div className="relative h-[480px] overflow-hidden rounded-md bg-muted lg:h-[520px]">
